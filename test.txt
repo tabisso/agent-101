@@ -1,0 +1,15 @@
+Agent = "The manager "
+decides what needs to be done 
+
+chains -- "The workers"
+ Executes tasks step-by-step 
+
+ prompt-- " Instructios"
+ tell the ai how to work 
+
+ schemas -- "Rules  and format"
+ Force clean, structured output
+
+ Tools -- Memory -- "Resoures" 
+ files , knowledge 
+ 
