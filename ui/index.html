@@ -275,7 +275,7 @@
                 throw new Error(`Streaming not supported or server error`);
             }
 
-            const reader = reposne.body.getReader();
+            const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let buffer = ''
 
@@ -321,8 +321,8 @@
 
             const formData = new FormData()
             formData.append('business_task', document.getElementById('taskInput').value);
-            formData.append('tone', document.getElementById('toneSelect').value);
-            formData.append('depth', document.getElementById('depthSelect').value);
+            formData.append('tone', document.getElementById('toneInput').value);
+            formData.append('depth', document.getElementById('depthInput').value);
 
             try {
                 await streamAgent(formData)
@@ -475,5 +475,6 @@
             }
     </script>
 </body>
+
 
 </html>

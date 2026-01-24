@@ -3,7 +3,8 @@ import os
 from langchain_openai import ChatOpenAI
 
 from langchain_core.prompts import ChatPromptTemplate
-from config import MODEL_NAME, OPEN_API_KEY, PROMPTS_DIR, BussinessOverview 
+from config import MODEL_NAME, OPEN_API_KEY, PROMPTS_DIR 
+from schemas.output_schema import BussinessOverview 
 
 
 class BusinessChain:
