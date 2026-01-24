@@ -264,6 +264,45 @@
 
 
         // TODO - STREAM AGENT FUNCTION
+
+        async function streamAgent(formData) {
+            const response = await fetch('/run-agent', {
+                method : 'POST',
+                body : formData
+            });
+
+            if (!response.ok || !response.body) {
+                throw new Error(`Streaming not supported or server error`);
+            }
+
+            const reader = reposne.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = ''
+
+            while(true){
+                const{ done, value} = await reader.read()
+                if (done) break;
+                buffer += decoder.decode(value, {stream: true});
+                const chunks = buffer.split("\n\n");
+                buffer = chunks.pop()  || '';
+                for (const chunk of chunks) {
+                    const clean = chunk.replace(/^data: \s*/, '').trim();
+                    if (!clean) continue;
+                    try {
+                        const event = JSON.parse(clean);
+                        if (event.type === 'log') {
+                            addLog(event.content.step, event.content.message);
+                        } else if (event.type === 'result') {
+                            renderData(event.content); 
+                        }
+                        
+                    } catch (error) {
+                        console.error("Error parsing chunk:", error);
+                        
+                    }
+
+            }
+        }
           
         // 3. MAIN AGENT EXECUTION
         form.addEventListener('submit', async (e) => {
@@ -279,6 +318,23 @@
             addLog("SYSTEM", "Gathering parameters and context...");
 
             // --- TODO - WRITE CORE FETCH LOGIC HERE ---
+
+            const formData = new FormData()
+            formData.append('business_task', document.getElementById('taskInput').value);
+            formData.append('tone', document.getElementById('toneSelect').value);
+            formData.append('depth', document.getElementById('depthSelect').value);
+
+            try {
+                await streamAgent(formData)
+                
+            } catch (error) {
+                addLog("Error:" + error?.message)
+                
+            } finally{
+                runBtn.disabled = false;
+                runBtn.innerText = "Run Agent Analysis";
+            }
+
         });
         
         function renderData(out) {

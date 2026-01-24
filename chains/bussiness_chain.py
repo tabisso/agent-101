@@ -1,6 +1,8 @@
 
 import os
-from langchain_openai  import ChatOpenAI
+from langchain_openai import ChatOpenAI
+
+from langchain_core.prompts import ChatPromptTemplate
 from config import MODEL_NAME, OPEN_API_KEY, PROMPTS_DIR, BussinessOverview 
 
 
@@ -34,3 +36,9 @@ class BusinessChain:
         chain = prompt | self.llm.with_structured_output(BussinessOverview)
 
         print(f"[CHIAIN] Running business chain  with Tone:{self.tone}")
+
+        enhanced_task = f"{business_task}\n\n Please write in a {self.tone}."
+        result = chain.invoke({"business_task": enhanced_task})
+        print(f"result: {result}")
+        return result.model_dump()
+    

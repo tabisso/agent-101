@@ -1,4 +1,8 @@
 from fastapi import APIRouter, Form
+from fastapi.responses import StreamingResponse
+import json
+
+from agent.executor import AgentExecutor
 
 
 
@@ -11,4 +15,11 @@ async def run_agent(
     tone: str = Form(...),
     depth: str = Form(...),
 ):  
-    return "Hello" 
+    executor = AgentExecutor(tone=tone, depth=depth)
+
+    async def event_generator():
+        async for event in executor.run_stream(business_task):
+            yield f"data: {json.dumps(event)}\n\n"  
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
+
