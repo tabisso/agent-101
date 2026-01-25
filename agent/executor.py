@@ -1,6 +1,7 @@
 
 
 import time
+import asyncio
 
 from chains.bussiness_chain import BusinessChain
 
@@ -11,7 +12,7 @@ class AgentExecutor:
         self.tone = tone
         self.depth = depth
 
-        async def run_stream(self, business_task: str):
+    async def run_stream(self, business_task: str):
 
             yield {
                 "type": "log",
@@ -32,7 +33,10 @@ class AgentExecutor:
 
 
             chain = BusinessChain(tone=self.tone)
-            result = chain.run(business_task)
+            #little twiak 
+            
+            #result = chain.run(business_task)
+            result = await asyncio.to_thread(chain.run, business_task)
 
             yield {
                 "type": "result",
