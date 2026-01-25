@@ -1,10 +1,10 @@
+
+import json
 from fastapi import APIRouter, Form
 from fastapi.responses import StreamingResponse
-import json
-
-from agent.executor import AgentExecutor
 
 
+from agent.executor import AgentExecutor    
 
 router = APIRouter()
 
@@ -22,4 +22,6 @@ async def run_agent(
             yield f"data: {json.dumps(event)}\n\n"  
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+
 

@@ -1,6 +1,6 @@
 
 
-from time import time
+import time
 
 from chains.bussiness_chain import BusinessChain
 
@@ -16,7 +16,7 @@ class AgentExecutor:
             yield {
                 "type": "log",
                 "content": {    
-                    "step": "start",
+                    "step": "START",
                     "message": f"Agent started with tone: {self.tone} and depth: {self.depth}",
                     "timestamp": time.time()
                 }
@@ -38,7 +38,7 @@ class AgentExecutor:
                 "type": "result",
                 "content": {    
                     
-                    "business_overview": "result",
+                    "business_overview": result,
                 }
             }
 
