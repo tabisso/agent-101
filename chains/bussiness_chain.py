@@ -18,7 +18,7 @@ class BusinessChain:
 
     def run(self,business_task: str) -> dict:
 
-        prompt_path = os.path.join(PROMPTS_DIR, "business_overview_prompt.txt")
+        prompt_path = os.path.join(PROMPTS_DIR, "business_prompt.txt")
         system_prompt_path = os.path.join(PROMPTS_DIR, "system_prompt.txt")
 
         with open(prompt_path, 'r') as file:
@@ -31,15 +31,16 @@ class BusinessChain:
             ("system", system_prompt_text),
             ("user", user_prompt_text)
         ])  
-
-        print('prompt', prompt)
+       # cancel prompt print from output terminal
+       # print('prompt', prompt)
 
         chain = prompt | self.llm.with_structured_output(BussinessOverview)
-
-        print(f"[CHIAIN] Running business chain  with Tone:{self.tone}")
+#   calling the chain
+        #print(f"[CHIAIN] Running business chain  with Tone:{self.tone}")
 
         enhanced_task = f"{business_task}\n\n Please write in a {self.tone}."
         result = chain.invoke({"business_task": enhanced_task})
-        print(f"result: {result}")
+        # cancel result print
+       # print(f"result: {result}")
         return result.model_dump()
     
