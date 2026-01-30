@@ -41,24 +41,9 @@ async def run_agent(
     executor = AgentExecutor(tone=tone, depth=depth)
 
     async def event_generator():
-        try:
-            # quick ping so browser knows stream started
-            yield f"data: {json.dumps({'type':'log','content':{'step':'SYSTEM','message':'Stream started'}})}\n\n"
-            await asyncio.sleep(0.05)
-
-            async for event in executor.run_stream(business_task):
-                yield f"data: {json.dumps(event, default=str)}\n\n"
-
-            yield f"data: {json.dumps({'type':'log','content':{'step':'SYSTEM','message':'Stream finished'}})}\n\n"
-
-        except Exception as e:
-            yield f"data: {json.dumps({'type':'log','content':{'step':'ERROR','message': str(e)}})}\n\n"
-
+        async for event in executor.run_stream(business_task):
+            yield f"data: {json.dumps(event)}\n\n"
     return StreamingResponse(
         event_generator(),
-        media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-        },
-    )
+        media_type="text/event-stream"
+        )
