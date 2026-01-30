@@ -15,43 +15,47 @@ class AgentExecutor:
 
     async def run_stream(self, business_task: str):
             
+            def create_log(step, message):
+                return {
+                    "type": "log",
+                    "content": {
+                        "step": step,
+                        "message": message,
+                        "timestamp": time.time()
+                    }
+                }
+            
             #Planning
             planner = ExecutionPlanner(tone=self.tone, depth=self.depth)
             plan = await asyncio.to_thread(planner.generate_plan, business_task)
 
             steps = plan.get("steps", [])
+            yield create_log("PLANNING", f"Decided steps: {steps}")
 
-            yield {
-                "type": "log",
-                "content": {    
-                    "step": "START",
-                    "message": f"Agent started with tone: {self.tone} and depth: {self.depth}",
-                    "timestamp": time.time()
-                }
-            }
-            yield {
-                "type": "log",
-                "content": {    
-                    "step": "EXECUTION",
-                    "message": "Running Business Chain...",
-                    "timestamp": time.time()
-                }
-            }
+            #2. Execution
+            final_output_data = {}
+            #Business chain
+            if "business_analysis" in steps:
+                yield create_log("EXECUTION", "Starting Business Analysis...")
+                chain = BusinessChain(tone=self.tone)
+                final_output_data["business_overview"] = await asyncio.to_thread(chain.run, business_task);
+        
+
+          
 
 
-            chain = BusinessChain(tone=self.tone)
+           
             #little twiak 
             
-            #result = chain.run(business_task)
-            result = await asyncio.to_thread(chain.run, business_task)
-
-            yield {
-                "type": "result",
-                "content": {    
+            # result = chain.run(business_task)
+           
+            # yield {
+            #     "type": "result",
+            #     "content": {    
                     
-                    "business_overview": result,
-                }
-            }
+            #         "business_overview": result,
+            #     }
+            # }
 
 
             

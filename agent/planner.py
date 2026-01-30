@@ -10,7 +10,7 @@ from schemas.output_schema import BussinessOverview
 from pydantic import BaseModel, Field
 
 class ExectutionPlan(BaseModel):
-    __steps: list[str] = Field(description="List of steps to execute the business plan.")
+    steps: list[str] = Field(description="List of steps to execute the business plan.")
 
 class ExecutionPlanner:
     def __init__(self, tone: str = "professional", depth: str = "normal"):
@@ -24,7 +24,7 @@ class ExecutionPlanner:
         )
 
 
-def generate_plan(self, business_task: str) -> dict:
+    def generate_plan(self, business_task: str) -> dict:
         prompt_path = os.path.join(PROMPTS_DIR, "planner_prompt.txt")
         system_prompt_path = os.path.join(PROMPTS_DIR, "system_prompt.txt")
 
