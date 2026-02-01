@@ -8,6 +8,8 @@ from agent.planner import ExecutionPlanner
 from chains.business_chain import BusinessChain
 from chains.marketing_chain import MarketingChain
 from schemas.output_schema import FinalOutput
+from chains.task_chain import TaskChain
+from chains.email_chain import EmailChain
 
 
 class AgentExecutor:
@@ -39,7 +41,7 @@ class AgentExecutor:
             final_output_data = {}
             #Business chain
             if "business_analysis" in steps:
-                yield create_log("EXECUTION", "Starting Business Analysis...")
+                yield create_log("EXECUTION", "Running Business Analysis...")
                 chain = BusinessChain(tone=self.tone)
                 final_output_data["business_overview"] = await asyncio.to_thread(chain.run, business_task);
 
@@ -47,10 +49,30 @@ class AgentExecutor:
 
             # Marketing chain
             if "marketing_strategy" in steps:
-                yield create_log("EXECUTION", "Starting Marketing Strategy...")
+                yield create_log("EXECUTION", "Running Marketing Strategy...")
                 
                 chain = MarketingChain(tone=self.tone)
                 final_output_data["marketing_strategy"] = await asyncio.to_thread(chain.run, business_task);
+            
+
+            # Email chain
+            if "email_campaign" in steps:
+                yield create_log("EXECUTION", "Running Email Campaign Chain...")
+
+                count = 3
+
+
+                chain = EmailChain(tone=self.tone, count=count)
+                final_output_data["email_campaign"] = await asyncio.to_thread(chain.run, business_task);
+            # Task chain
+            if "task_breakdown" in steps:
+                yield create_log("EXECUTION", "Running Task Breakdown Chain...")
+                chain = TaskChain(tone=self.tone)
+                final_output_data["task_breakdown"] = await asyncio.to_thread(chain.run, business_task);
+
+                
+
+
 
 
             #Review the output -- TO DO

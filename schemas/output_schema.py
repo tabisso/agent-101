@@ -44,7 +44,19 @@ class EmailCampaign(BaseModel):
 class EmailList(BaseModel):
     emails: List[EmailCampaign] = Field(description="List of 3 email campaigns")
 
+
+class Task(BaseModel):
+    task_order: int = Field(description="Order of the task")
+    task_name: str = Field(description="Name of the task")
+    description: str = Field(description="Description of the task")
+    priority: str = Field(description="Reason why this task is important")
+    why_this_matter: str = Field(description="Reason why this task is important")
+
+class TaskList(BaseModel):
+    tasks: List[Task] = Field(description="List of 5 tasks with details")    
+
 class FinalOutput(BaseModel):
     business_overview: BussinessOverview 
     marketing_strategy: MarketingStrategy 
-    email_campaigns: List[EmailCampaign] = Field(description="List of email campaigns")
+    email_campaign: List[EmailCampaign]
+    task_breakdown: List[Task]
