@@ -33,6 +33,18 @@ class MarketingStrategy(BaseModel):
     ignored_channels: IgnoredChannel = Field(description="One marketing channel to ignore with reason")
 
 
+class EmailCampaign(BaseModel):
+    email_number: int = Field(description="Email sequence number")
+    objective: str = Field(description="Objective of the email")
+    subject : str = Field(description="Subject line of the email")
+    body: str = Field(description="Body content of the email")
+    call_to_action: str = Field(description="Call to action of the email")
+
+
+class EmailList(BaseModel):
+    emails: List[EmailCampaign] = Field(description="List of 3 email campaigns")
+
 class FinalOutput(BaseModel):
     business_overview: BussinessOverview 
     marketing_strategy: MarketingStrategy 
+    email_campaigns: List[EmailCampaign] = Field(description="List of email campaigns")

@@ -48,6 +48,7 @@ class AgentExecutor:
             # Marketing chain
             if "marketing_strategy" in steps:
                 yield create_log("EXECUTION", "Starting Marketing Strategy...")
+                
                 chain = MarketingChain(tone=self.tone)
                 final_output_data["marketing_strategy"] = await asyncio.to_thread(chain.run, business_task);
 
@@ -63,7 +64,7 @@ class AgentExecutor:
                  final_output_obj= FinalOutput(**final_output_data)
 
                  validated_data = final_output_obj.model_dump()
-                 yield create_log("COMPLETION", "Final output validated successfully.")
+                 yield create_log("SUCCESS", "Final output validated successfully.")
                  yield {
                      "type": "result",
                      "content": validated_data
