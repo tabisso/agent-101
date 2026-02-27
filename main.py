@@ -3,12 +3,18 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 
+from api.middleware import RateLimitMiddleware
 from api.router import router
 
 app = FastAPI(title="Business AI Agent", version='1.0.0')
 
 #Include routers
 app.include_router(router)
+
+# Include middleware
+# Tip: 60 is a sane starting point; tune later.
+app.add_middleware(RateLimitMiddleware, requests_per_minute=1)
+
 
 #Mount UI
 app.mount("/app",StaticFiles(directory="ui", html=True), name="ui")

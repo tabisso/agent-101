@@ -265,11 +265,13 @@
 
         // TODO - STREAM AGENT FUNCTION
 
-        async function streamAgent(formData) {
-            const response = await fetch('/run-agent', {
-                method : 'POST',
-                body : formData
-            });
+        const response = await fetch(
+    window.location.origin + '/run-agent',
+    {
+        method: 'POST',
+        body: formData
+    }
+);
 
             if (!response.ok || !response.body) {
                 throw new Error(`Streaming not supported or server error`);
@@ -321,7 +323,17 @@
 
             // --- TODO - WRITE CORE FETCH LOGIC HERE ---
 
-            const formData = new FormData()
+            const task = document.getElementById('taskInput').value.trim();
+
+if (!task) {
+    alert("Please enter a business goal.");
+    runBtn.disabled = false;
+    runBtn.innerText = "Analyze & Generate Plan";
+    return;
+}
+
+const formData = new FormData();
+formData.append('business_task', task);
             formData.append('business_task', document.getElementById('taskInput').value);
             formData.append('tone', document.getElementById('toneInput').value);
             formData.append('depth', document.getElementById('depthInput').value);
@@ -347,7 +359,7 @@
                 await streamAgent(formData)
                 
             } catch (error) {
-                addLog("Error:" + error?.message  ||"Unknown error")
+                addLog("Error:" ,error?.message  ||"Unknown error")
                 
             } finally{
                 runBtn.disabled = false;

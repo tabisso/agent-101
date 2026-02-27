@@ -11,6 +11,7 @@ from schemas.output_schema import FinalOutput
 from chains.task_chain import TaskChain
 from chains.email_chain import EmailChain
 from agent.reviewer import ReviewerChain
+from rag.retriever import RagRetriever
 
 
 class AgentExecutor:
@@ -31,7 +32,24 @@ class AgentExecutor:
                     }
                 }
             
-            #Planning
+            # Retrieve relevant context from vector store
+            retriever = RagRetriever()
+            yield create_log("RAG", "Starting Retrieval-Agumented Generation Process...")
+            retrieved_text = await asyncio.to_thread(retriever.retrieve, business_task, k = 5) 
+            
+            if retrieved_text:
+                yield create_log("RAG", "Relevent documents retrieved successufully.")
+
+
+                business_task = (
+                     f"### retrieved_context\n{retrieved_text}\n\n"
+                     f"### end_retrieved_context\n\n"
+                     f"CORE BUSINESS TASK: {business_task}"
+
+
+                )
+
+            #1Planning
             planner = ExecutionPlanner(tone=self.tone, depth=self.depth)
             plan = await asyncio.to_thread(planner.generate_plan, business_task)
 
@@ -48,24 +66,24 @@ class AgentExecutor:
 
 
 
-            # Marketing chain
-            if "marketing_strategy" in steps:
-                yield create_log("EXECUTION", "Running Marketing Strategy...")
+            # 3 Marketing chain
+            # if "marketing_strategy" in steps:
+            #     yield create_log("EXECUTION", "Running Marketing Strategy...")
                 
-                chain = MarketingChain(tone=self.tone)
-                final_output_data["marketing_strategy"] = await asyncio.to_thread(chain.run, business_task);
+            #     chain = MarketingChain(tone=self.tone)
+            #     final_output_data["marketing_strategy"] = await asyncio.to_thread(chain.run, business_task);
             
 
-            # Email chain
-            if "email_campaign" in steps:
-                yield create_log("EXECUTION", "Running Email Campaign Chain...")
+            # 4 Email chain
+            # if "email_campaign" in steps:
+            #     yield create_log("EXECUTION", "Running Email Campaign Chain...")
 
-                count = 3
+            #     count = 3
 
 
-                chain = EmailChain(tone=self.tone, count=count)
-                final_output_data["email_campaign"] = await asyncio.to_thread(chain.run, business_task);
-            # Task chain
+            #     chain = EmailChain(tone=self.tone, count=count)
+            #     final_output_data["email_campaign"] = await asyncio.to_thread(chain.run, business_task);
+            #5 Task chain
             if "task_breakdown" in steps:
                 yield create_log("EXECUTION", "Running Task Breakdown Chain...")
                 chain = TaskChain(tone=self.tone)
@@ -76,23 +94,24 @@ class AgentExecutor:
 
 
 
-            #Review the output -- TO DO
+            #Review the output 
                 yield create_log("EXECUTION", "Reviewing output for quality assurance ...")    
                 reviewer = ReviewerChain()
                 reviewed_output = await asyncio.to_thread(reviewer.review, business_task, final_output_data)
                 yield create_log("REVIEW", "Reviewing Completed. Improvements applied.")
                
 
-            #4 Validaton -- TO DO
+            #4 Validaton 
 
 
 
             try:
-                 final_output_obj= FinalOutput(**reviewed_output)
+                final_output_data["task_breakdown"] = await asyncio.to_thread(chain.run, business_task);
+                final_output_obj= FinalOutput(**reviewed_output)
 
-                 validated_data = final_output_obj.model_dump()
-                 yield create_log("SUCCESS", "Final output validated successfully.")
-                 yield {
+                validated_data = final_output_obj.model_dump()
+                yield create_log("SUCCESS", "Final output validated successfully.")
+                yield {
                      "type": "result",
                      "content": validated_data
                  }
@@ -108,18 +127,7 @@ class AgentExecutor:
 
 
            
-            #little twiak 
-            
-            # result = chain.run(business_task)
-           
-            # yield {
-            #     "type": "result",
-            #     "content": {    
-                    
-            #         "business_overview": result,
-            #     }
-            # }
-
+          
 
             
            

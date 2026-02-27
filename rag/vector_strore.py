@@ -1,11 +1,15 @@
 # creating vector store for agent context
 #import os and embedder
 import os
+
+import chromadb
 from config import BASE_DIR
-from embedder import Embedder
-from langchain import Chroma
+
+from langchain_chroma import Chroma 
 from langchain_core.documents import Document
 from typing import List
+
+from rag.embedder import Embedder
 
 
 class VectorStore:
