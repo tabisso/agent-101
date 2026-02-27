@@ -11,9 +11,9 @@ app = FastAPI(title="Business AI Agent", version='1.0.0')
 #Include routers
 app.include_router(router)
 
-# Include middleware
-# Tip: 60 is a sane starting point; tune later.
-app.add_middleware(RateLimitMiddleware, requests_per_minute=1)
+
+app.add_middleware(RateLimitMiddleware, requests_per_minute=5)
+
 
 
 #Mount UI

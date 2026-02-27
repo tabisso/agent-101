@@ -15,7 +15,8 @@ from rag.embedder import Embedder
 class VectorStore:
     
     
-    VECTOR_DB_DIR = os.path.join(BASE_DIR, "vector_db_chroma")
+    # VECTOR_DB_DIR = os.path.join(BASE_DIR, "vector_db_chroma")
+    VECTOR_DB_DIR = os.path.join(os.path.expanduser("~"), "business_agent_data", "vector_db_chroma")
 
     def __init__(self):
         self.embedding_function = Embedder.get_instance()
@@ -29,12 +30,20 @@ class VectorStore:
     def add_documents(self, documents: list[Document]):
         if not documents:
             return
+        
         self.db.add_documents(documents)
         print(f"Added {len(documents)} documents to vector store")
     
 
     #search doc in db vector store
     def similarity_search(self, query: str, k: int = 5) -> List[Document]:
-        results = self.db.similarity_search(query, k=k)
-        #print(f"Retrieved {len(results)} documents from vector store for query: {query}")
-        return results
+        return self.db.similarity_search(query, k=k)
+
+        #clear vector store     
+    def clear(self):
+
+        try:
+            self.db.reset_collection()
+            print("Vector store cleared.")
+        except Exception as e:
+            print(f"Error clearing vector store: {e}")

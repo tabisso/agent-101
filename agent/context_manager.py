@@ -30,6 +30,7 @@ class ContextManager:
         #1 validation of file 
         if file.content_type not in self.ALLOWED_TYPES:
             raise ValueError(f"Unsupported file type")
+        
         content = await file.read()
         if len(content) > self.MAX_FILE_SIZE:
             raise ValueError(f"File size exceeds the maximum limit of 5MB") 

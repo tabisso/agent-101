@@ -18,14 +18,15 @@ class ReviewerChain:
         )
 
     def review(self, task: str, current_output: dict) -> dict:
+
         prompt_path = os.path.join(PROMPTS_DIR, "reviewer_prompt.txt")
         system_prompt_path = os.path.join(PROMPTS_DIR, "reviewer_system_prompt.txt")
 
-        with open(prompt_path, 'r') as file:
-            user_prompt_text = file.read()
+        with open(prompt_path, 'r') as f:
+            user_prompt_text = f.read()
 
-        with open(system_prompt_path, 'r') as file:
-            system_prompt_text = file.read()
+        with open(system_prompt_path, 'r') as f:
+            system_prompt_text = f.read()
 
         prompt= ChatPromptTemplate.from_messages([
             ("system", system_prompt_text),

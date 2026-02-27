@@ -1,35 +1,10 @@
 
-# import json
-# import asyncio  
-# from fastapi import APIRouter, Form
-# from fastapi.responses import StreamingResponse
-# from agent.executor import AgentExecutor    
-
-# router = APIRouter()
-
-
-# @router.post("/run-agent")
-# async def run_agent(
-#     business_task: str = Form(...),
-#     tone: str = Form(...),
-#     depth: str = Form(...),
-# ):  
-#     executor = AgentExecutor(tone=tone, depth=depth)
-
-#     async def event_generator():
-#         async for event in executor.run_stream(business_task):
-#             yield f"data: {json.dumps(event)}\n\n"  
-
-#     return StreamingResponse(event_generator(), media_type="text/event-stream")
-
-
-
 import json
-import asyncio
 from typing import Optional
 from fastapi import APIRouter, Form, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from agent.context_manager import ContextManager
+from rag.vector_strore import VectorStore
 from agent.executor import AgentExecutor
 
 router = APIRouter()
@@ -46,17 +21,26 @@ async def run_agent(
         try:
             manager = ContextManager()
             await manager.ingest_file(context_file)
-
         except Exception as e:
-            print(f"Error processing context file: {e}")
-            raise HTTPException(status_code=400, detail=f"Failed to read context file")
+            print(f"Error reading context file: {e}")
+            raise HTTPException(status_code=400, detail="Failed to read context file")
     executor = AgentExecutor(tone=tone, depth=depth)
-        
-        
+
     async def event_generator():
         async for event in executor.run_stream(business_task):
             yield f"data: {json.dumps(event)}\n\n"
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream"
-        )
+
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+
+@router.post("/reset-db")
+async def reset_database():
+
+    try:
+        vs = VectorStore()
+        vs.clear()
+        return {"status": "success", "message": "Vector database has been reset."}
+    except Exception as e:
+        print(f"Error resetting database: {e}")
+        raise HTTPException(status_code=500, detail="Failed to reset vector database")

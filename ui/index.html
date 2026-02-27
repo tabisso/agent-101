@@ -237,7 +237,20 @@
         // 1. CLEAR MEMORY LOGIC
         document.getElementById('clearContextBtn').addEventListener('click', async () => {
             if (!confirm("Wipe Agent Memory?")) return;
-            // TODO - ADD CLEAR MEMORY LOGIC HERE
+            try {
+                const response = await fetch('/reset-db', { method: 'POST' });
+                const data = await response.json();
+                if (response.ok) {
+                    alert("Memory Wiped!");
+                } else {
+                    alert("Error wiping memory: " + (data?.message || 'Unknown error'));
+                }
+
+
+                alert("Memory Wiped!");
+            } catch (error) {
+                alert("Error wiping memory: " + error?.message);
+            }
         });
 
         // 2. TAB CONTROLLER
@@ -263,15 +276,12 @@
         }
 
 
-        // TODO - STREAM AGENT FUNCTION
-
-        const response = await fetch(
-    window.location.origin + '/run-agent',
-    {
-        method: 'POST',
-        body: formData
-    }
-);
+        // STREAM AGENT FUNCTION
+           async function streamAgent(formData) {
+            const response = await fetch('/run-agent', {
+                method: 'POST',
+                body: formData
+            });
 
             if (!response.ok || !response.body) {
                 throw new Error(`Streaming not supported or server error`);
@@ -281,33 +291,33 @@
             const decoder = new TextDecoder();
             let buffer = ''
 
-            while(true){
-                const{ done, value} = await reader.read()
+            while(true) {
+                const { done, value } = await reader.read();
                 if (done) break;
-                buffer += decoder.decode(value, {stream: true});
-                const chunks = buffer.split("\n\n");
-                buffer = chunks.pop()  || '';
-                for (const chunk of chunks) {
-                    const clean = chunk.replace(/^data: \s*/, '').trim();
-                    if (!clean) continue;
+
+                buffer += decoder.decode(value, { stream: true })
+                const chunks = buffer.split('\n\n');
+                buffer = chunks.pop() || ''; // Keep incomplete chunk
+
+                for(const chunk of chunks) {
+                    const clean = chunk.replace(/^data:\s*/, '').trim();
+                    if(!clean) continue
+
                     try {
                         const event = JSON.parse(clean);
+
                         if (event.type === 'log') {
                             addLog(event.content.step, event.content.message);
                         } else if (event.type === 'result') {
-                            renderData(event.content); 
+                            renderData(event.content);
                         }
-                        
                     } catch (error) {
                         console.error("Error parsing chunk:", error);
-                        
                     }
                 }
-
             }
-        }
-    
-          
+           }
+
         // 3. MAIN AGENT EXECUTION
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -321,51 +331,35 @@
 
             addLog("SYSTEM", "Gathering parameters and context...");
 
-            // --- TODO - WRITE CORE FETCH LOGIC HERE ---
-
-            const task = document.getElementById('taskInput').value.trim();
-
-if (!task) {
-    alert("Please enter a business goal.");
-    runBtn.disabled = false;
-    runBtn.innerText = "Analyze & Generate Plan";
-    return;
-}
-
-const formData = new FormData();
-formData.append('business_task', task);
+            // --- WRITE CORE FETCH LOGIC HERE ---
+            const formData = new FormData()
             formData.append('business_task', document.getElementById('taskInput').value);
             formData.append('tone', document.getElementById('toneInput').value);
             formData.append('depth', document.getElementById('depthInput').value);
             const fileInput = document.getElementById('contextFile');
-            if (fileInput.files.length > 0) { 
+
+            if(fileInput.files.length > 0){
                 const file = fileInput.files[0];
-                if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                if(file.size > 5 * 1024 * 1024){
                     alert("File size exceeds 5MB limit.");
                     runBtn.disabled = false;
                     runBtn.innerText = "Run Agent Analysis";
-
-                } 
+                    return;
+                }
                 formData.append('context_file', file);
 
-                //render
-                 logsContainer.innerHTML = '<div class="text-yellow-400 font-mono text-xs mb-1">[SYSTEM] Uploading and analyzing context document...</div>';
+               logsContainer.innerHTML = '<div class="text-yellow-400 font-mono text-xs mb-1">[SYSTEM] Uploading and analyzing context document...</div>';
 
-
-
-                }
+            }
 
             try {
                 await streamAgent(formData)
-                
             } catch (error) {
-                addLog("Error:" ,error?.message  ||"Unknown error")
-                
-            } finally{
+                addLog("Error: "+ error?.message)
+            } finally {
                 runBtn.disabled = false;
                 runBtn.innerText = "Run Agent Analysis";
             }
-
         });
         
         function renderData(out) {
@@ -505,8 +499,6 @@ formData.append('business_task', task);
                 el.innerText = value ?? '';
             }
     </script>
-
 </body>
 
-
-</html> 
+</html>

@@ -12,7 +12,9 @@ class RagRetriever:
 
     def retrieve(self, query: str, k: int = 5):
         """Retrieve relevant documents from the vector store based on the query."""
+
         docs = self.vector_store.similarity_search(query, k=k)
+        
         if not docs:
             return ""
         #fromat chunks to string
