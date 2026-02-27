@@ -10,6 +10,7 @@ from chains.marketing_chain import MarketingChain
 from schemas.output_schema import FinalOutput
 from chains.task_chain import TaskChain
 from chains.email_chain import EmailChain
+from agent.reviewer import ReviewerChain
 
 
 class AgentExecutor:
@@ -76,14 +77,18 @@ class AgentExecutor:
 
 
             #Review the output -- TO DO
-
+                yield create_log("EXECUTION", "Reviewing output for quality assurance ...")    
+                reviewer = ReviewerChain()
+                reviewed_output = await asyncio.to_thread(reviewer.review, business_task, final_output_data)
+                yield create_log("REVIEW", "Reviewing Completed. Improvements applied.")
+               
 
             #4 Validaton -- TO DO
 
 
 
             try:
-                 final_output_obj= FinalOutput(**final_output_data)
+                 final_output_obj= FinalOutput(**reviewed_output)
 
                  validated_data = final_output_obj.model_dump()
                  yield create_log("SUCCESS", "Final output validated successfully.")

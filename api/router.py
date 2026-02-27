@@ -26,7 +26,8 @@
 
 import json
 import asyncio
-from fastapi import APIRouter, Form
+from typing import Optional
+from fastapi import APIRouter, Form, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from agent.executor import AgentExecutor
 
@@ -37,7 +38,25 @@ async def run_agent(
     business_task: str = Form(...),
     tone: str = Form(...),
     depth: str = Form(...),
+    context_file: Optional[UploadFile] = Form(None)
 ):
+    
+    # if context_file:
+    #     try:
+    #         manager = AgentExecutor(tone=tone, depth=depth)
+    #         await manager.ingest_file(context_file.file)
+
+    #     except:
+    #         raise HTTPException(status_code=400, detail=f"Failed to read context file")
+    executor = AgentExecutor(tone=tone, depth=depth)
+        
+        
+
+                
+        
+
+
+
     executor = AgentExecutor(tone=tone, depth=depth)
 
     async def event_generator():

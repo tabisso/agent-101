@@ -325,6 +325,23 @@
             formData.append('business_task', document.getElementById('taskInput').value);
             formData.append('tone', document.getElementById('toneInput').value);
             formData.append('depth', document.getElementById('depthInput').value);
+            const fileInput = document.getElementById('contextFile');
+            if (fileInput.files.length > 0) { 
+                const file = fileInput.files[0];
+                if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                    alert("File size exceeds 5MB limit.");
+                    runBtn.disabled = false;
+                    runBtn.innerText = "Run Agent Analysis";
+
+                } 
+                formData.append('context_file', file);
+
+                //render
+                 logsContainer.innerHTML = '<div class="text-yellow-400 font-mono text-xs mb-1">[SYSTEM] Uploading and analyzing context document...</div>';
+
+
+
+                }
 
             try {
                 await streamAgent(formData)
