@@ -1,3 +1,8 @@
 # Environment variables
+venv/
+__pycache__/
+*.pyc
 .env
-.env.*
+vector_db_chroma/
+*.sqlite3
+*.db
