@@ -71,22 +71,43 @@
                 </div>
 
                 <!-- 3. Context Upload (RAG) -->
-                <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div class="flex-1">
-                            <label class="block text-sm font-black text-indigo-900 mb-1 uppercase tracking-tight">Add
-                                Context (PDF / TXT)</label>
-                            <!-- <input type="file" id="contextFile" accept=".pdf,.txt"  this is temporarly disabled-->
-                            <input type="file" id="contextFile" accept=".pdf,.txt" disabled />
-<small>File upload temporarily disabled in demo</small> 
-                                class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 transition-all">
-                        </div>
-                        <button type="button" id="clearContextBtn"
-                            class="text-xs font-bold text-rose-500 hover:text-rose-700 underline underline-offset-4 decoration-rose-300">
-                            🗑️ Clear Memory
-                        </button>
-                    </div>
-                </div>
+                 <!-- 3. Context Upload (RAG) -->
+<div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+        <div class="flex-1">
+            <label class="block text-sm font-black text-indigo-900 mb-1 uppercase tracking-tight">
+                Add Context (PDF / TXT)
+            </label>
+
+            <input
+                type="file"
+                id="contextFile"
+                accept=".pdf,.txt"
+                disabled
+                class="block w-full text-xs text-slate-500
+                       file:mr-4 file:py-2 file:px-4
+                       file:rounded-full file:border-0
+                       file:text-xs file:font-bold
+                       file:bg-indigo-600 file:text-white
+                       hover:file:bg-indigo-700 transition-all"
+            />
+
+            <small class="text-xs text-slate-600">
+                File upload temporarily disabled in demo
+            </small>
+        </div>
+
+        <button
+            type="button"
+            id="clearContextBtn"
+            class="text-xs font-bold text-rose-500 hover:text-rose-700 underline underline-offset-4 decoration-rose-300">
+            🗑️ Clear Memory
+        </button>
+
+    </div>
+</div>
+             
 
                 <!-- Run Button -->
                 <button type="submit" id="runBtn"
