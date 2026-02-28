@@ -161,7 +161,7 @@ Final Business Plan Output
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/tabisso/ai-business-agent.git
+git clone https://github.com/tabisso/agent-101
 cd ai-business-agent
 ```
 
@@ -242,13 +242,13 @@ This project demonstrates:
 
 ## 📸 Demo
 
-*(Add screenshots or demo video here)*
+
 
 ---
 
 ## 📄 License
 
-MIT License
+ License
 
 ---
 
